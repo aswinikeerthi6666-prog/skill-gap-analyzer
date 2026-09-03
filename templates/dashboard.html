@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Analyses — Skill Gap Analyzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="nav-row">
+      <div class="brand">
+        <h1><a href="{{ url_for('index') }}" class="brand-link">Skill Gap Analyzer</a></h1>
+      </div>
+      <nav class="account-nav">
+        <span class="nav-user">Hi, {{ current_user.name }}</span>
+        <a href="{{ url_for('logout') }}" class="nav-link nav-link-muted">Sign out</a>
+      </nav>
+    </div>
+    <p class="sub">Your saved analyses — click one to pick up where you left off.</p>
+  </header>
+
+  <main>
+    {% if analyses %}
+    <ul class="analyses-list">
+      {% for item in analyses %}
+      <li class="analysis-card">
+        <a href="{{ url_for('index') }}?load={{ item.analysis_id }}" class="analysis-card-link">
+          <div class="analysis-card-top">
+            <span class="analysis-match">{{ item.match_percent }}%</span>
+            <span class="analysis-date">{{ item.created_at[:10] }}</span>
+          </div>
+          <p class="analysis-snippet">{{ item.job_description[:160] }}{% if item.job_description|length > 160 %}…{% endif %}</p>
+          <div class="analysis-progress-row">
+            <div class="progress-track small">
+              <div class="progress-fill" style="width: {{ (item.steps_done / item.steps_total * 100) if item.steps_total else 0 }}%;"></div>
+            </div>
+            <span class="analysis-progress-label">{{ item.steps_done }} of {{ item.steps_total }} steps done</span>
+          </div>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty-state">No saved analyses yet. Run an analysis and it'll show up here automatically.</p>
+    {% endif %}
+  </main>
+
+  <footer class="foot">Built with the Gemini API</footer>
+</div>
+
+</body>
+</html>
